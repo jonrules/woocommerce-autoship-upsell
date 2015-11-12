@@ -28,6 +28,7 @@ function wc_autoship_upsell_uninstall() {
 register_uninstall_hook( __FILE__, 'wc_autoship_upsell_uninstall' );
 
 function wc_autoship_upsell_scripts() {
+	//wp_enqueue_style( 'wc-autoship-upsell-jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css' );
 	wp_enqueue_script( 'jquery-ui-dialog' );
 
 	wp_enqueue_style( 'wc-autoship-upsell', plugin_dir_url( __FILE__ ) . 'css/style.css', array(), WC_Autoship_Upsell_Version );
@@ -61,9 +62,10 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 			get_current_user_id(),
 			0
 	);
+	$diff = $product->get_price() - $autoship_price;
 	$upsell_title = '';
-	if ($autoship_price > 0) {
-		$diff = $product->get_price() - $autoship_price;
+	if ($diff > 0) {
+
 		$upsell_title = __( 'Save ' . wc_price( $diff ) . ' with Auto-Ship', 'wc-autoship-upsell' );
 	} else {
 		$upsell_title = __( 'Add to Auto-Ship', 'wc-autoship-upsell' );
@@ -83,6 +85,8 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	return $name . $upsell_content;
 }
 add_filter( 'woocommerce_cart_item_name', 'wc_autoship_upsell_cart_item_name', 10, 3 );
+// WooCommerce 2.2
+add_filter( 'woocommerce_in_cart_product_title', 'wc_autoship_upsell_cart_item_name', 10, 3 );
 
 function wc_autoship_upsell_cart_ajax() {
 	if ( empty( $_POST['frequency'] ) ) {
