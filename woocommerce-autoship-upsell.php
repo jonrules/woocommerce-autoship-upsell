@@ -46,6 +46,11 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	}
 
 	$product_id = $item['product_id'];
+	$autoship_enabled = get_post_meta( $product_id, '_wc_autoship_enable_autoship', true );
+	if ( $autoship_enabled != 'yes' ) {
+		// No autoship
+		return $name;
+	}
 	$var_product_id = ( ! empty( $item['variation_id'] ) ) ? $item['variation_id'] : $item['product_id'];
 	$product = wc_get_product( $var_product_id );
 	$price = $product->get_price();
