@@ -74,11 +74,19 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 
 	ob_start();
 		?>
-			<a class="wc-autoship-upsell-cart-toggle" data-target="#wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>"><span class="wc-autoship-upsell-icon">&plus;</span><?php echo $upsell_title; ?></a>
-			<div id="wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>" class="wc-autoship-upsell-cart-options" title="<?php echo esc_attr( strip_tags( $upsell_title ) ); ?>">
-				<input type="hidden" name="wc_autoship_upsell_item_key" value="<?php echo esc_attr( $item_key ); ?>" />
-				<?php WC_Autoship::include_template( 'product/autoship-options', array( 'product' => $product ) ); ?>
-				<button type="button" class="wc-autoship-upsell-cart-submit button expand"><?php echo __( 'Update', 'wc-autoship-upsell' ); ?></button>
+			<div class="wc-autoship-upsell-container">
+				<a class="wc-autoship-upsell-cart-toggle" data-target="#wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>"><span class="wc-autoship-upsell-icon">&plus;</span><?php echo $upsell_title; ?></a>
+				<div id="wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>" class="wc-autoship-upsell-cart-options" title="<?php echo esc_attr( strip_tags( $upsell_title ) ); ?>">
+					<input type="hidden" name="wc_autoship_upsell_item_key" value="<?php echo esc_attr( $item_key ); ?>" />
+					<input type="hidden" name="wc_autoship_upsell_remove_from_cart_url" value="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>" />
+					<input type="hidden" name="wc_autoship_upsell_add_to_cart_url" value="<?php echo esc_attr( $product->add_to_cart_url() ) ?>" />
+					<?php echo preg_replace(
+							array( '/\bid="([^"]+)"/', '/\bfor="([^"]+)"/' ),
+							array( 'id="$1-' . $item_key . '"', 'for="$1-' . $item_key . '"' ),
+							WC_Autoship::render_template( 'product/autoship-options', array( 'product' => $product ) )
+					); ?>
+					<button type="button" class="wc-autoship-upsell-cart-submit button expand"><?php echo __( 'Update', 'wc-autoship-upsell' ); ?></button>
+				</div>
 			</div>
 		<?php
 	$upsell_content = ob_get_clean();
@@ -87,27 +95,3 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 add_filter( 'woocommerce_cart_item_name', 'wc_autoship_upsell_cart_item_name', 10, 3 );
 // WooCommerce 2.2
 add_filter( 'woocommerce_in_cart_product_title', 'wc_autoship_upsell_cart_item_name', 10, 3 );
-
-function wc_autoship_upsell_cart_ajax() {
-	if ( empty( $_POST['frequency'] ) ) {
-		header( "HTTP/1.1 200 OK" );
-		die();
-	}
-	if ( isset( $_POST['item_key'] ) ) {
-		$cart = WC()->cart;
-		$item = $cart->get_cart_item( $_POST['item_key'] );
-
-		$quantity = ( ! empty( $_POST['quantity'] ) ) ? $_POST['quantity'] : $item['quantity'];
-
-		$cart->remove_cart_item( $_POST['item_key'] );
-		$cart->add_to_cart( $item['product_id'], $quantity, $item['variation_id'], $item['variation'], array(
-			'wc_autoship_frequency' => $_POST['frequency']
-		) );
-		header( "HTTP/1.1 200 OK" );
-		die();
-	}
-	header( "HTTP/1.1 400 Bad Request" );
-	die();
-}
-add_action( 'wp_ajax_wc_autoship_upsell_cart', 'wc_autoship_upsell_cart_ajax' );
-add_action( 'wp_ajax_nopriv_wc_autoship_upsell_cart', 'wc_autoship_upsell_cart_ajax' );

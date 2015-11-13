@@ -10,7 +10,7 @@ jQuery(function ($) {
 		if ( $form.find('input[name="wc_autoship_frequency"]:checked').length > 0 ) {
 			return $form.find('input[name="wc_autoship_frequency"]:checked').val();
 		}
-		$form.find('[name="wc_autoship_frequency"]').val();
+		return $form.find('[name="wc_autoship_frequency"]').val();
 	}
 
 	$('.wc-autoship-upsell-cart-submit').click(function () {
@@ -20,13 +20,11 @@ jQuery(function ($) {
 		var itemKey = $form.find('input[name="wc_autoship_upsell_item_key"]').val();
 		var frequency = get_frequency_val($form);
 		var quantity = $('input[name="cart[' + itemKey + '][qty]"]').val();
-		var data = {
-			item_key: itemKey,
-			frequency: frequency,
-			quantity: quantity
-		};
-		$.post(WC_Autoship_Upsell.cart_upsell_url, data, function (response) {
-			window.location = WC_Autoship_Upsell.cart_url;
+		var remove_from_cart_url = $form.find('input[name="wc_autoship_upsell_remove_from_cart_url"]').val();
+		var add_to_cart_url = $form.find('input[name="wc_autoship_upsell_add_to_cart_url"]').val();
+		add_to_cart_url += '&quantity=' + encodeURIComponent(quantity) + '&wc_autoship_frequency=' + encodeURIComponent(frequency);
+		$.get(remove_from_cart_url, function (response) {
+			window.location = add_to_cart_url;
 		}).fail(function () {
 			alert('Error');
 			$submit.removeAttr('disabled');

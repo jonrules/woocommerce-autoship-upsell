@@ -1,13 +1,3 @@
-.wc-autoship-upsell-container .wc-autoship-upsell-cart-options {
-  display: none;
-}
-.wc-autoship-upsell-container .wc-autoship-upsell-cart-toggle {
-  font-size: 80%;
-  font-weight: bold;
-  color: red;
-  display: block;
-  cursor: pointer;
-}
 .ui-dialog[aria-describedby^="wc-autoship-upsell-cart-options-"] {
   overflow: hidden;
   position: absolute;
