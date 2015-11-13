@@ -1,9 +1,7 @@
 jQuery(function ($) {
 	$('.wc-autoship-upsell-cart-toggle').click(function () {
 		var $toggle = $(this);
-		$($toggle.data('target')).dialog({
-			minWidth: parseInt(0.7*$(window).width())
-		});
+		$($toggle.data('popup')).minPopup();
 	});
 
 	function get_frequency_val($form) {
@@ -16,7 +14,7 @@ jQuery(function ($) {
 	$('.wc-autoship-upsell-cart-submit').click(function () {
 		var $submit = $(this);
 		$submit.attr('disabled', 'disabled');
-		var $form = $submit.parent('.wc-autoship-upsell-cart-options');
+		var $form = $submit.parents('.wc-autoship-upsell-cart-options');
 		var itemKey = $form.find('input[name="wc_autoship_upsell_item_key"]').val();
 		var frequency = get_frequency_val($form);
 		var quantity = $('input[name="cart[' + itemKey + '][qty]"]').val();

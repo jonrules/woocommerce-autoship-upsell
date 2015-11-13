@@ -28,9 +28,8 @@ function wc_autoship_upsell_uninstall() {
 register_uninstall_hook( __FILE__, 'wc_autoship_upsell_uninstall' );
 
 function wc_autoship_upsell_scripts() {
-	//wp_enqueue_style( 'wc-autoship-upsell-jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css' );
-	wp_enqueue_script( 'jquery-ui-dialog' );
-
+	wp_enqueue_style( 'jquery-min-popup', plugin_dir_url( __FILE__ ) . 'css/jquery-min-popup.css', array(), WC_Autoship_Upsell_Version );
+	wp_enqueue_script( 'jquery-min-popup', plugin_dir_url( __FILE__ ) . 'js/jquery-min-popup.js', array( 'jquery' ), WC_Autoship_Upsell_Version, true );
 	wp_enqueue_style( 'wc-autoship-upsell', plugin_dir_url( __FILE__ ) . 'css/style.css', array(), WC_Autoship_Upsell_Version );
 	wp_register_script( 'wc-autoship-upsell', plugin_dir_url( __FILE__ ) . 'js/scripts.js', array( 'jquery' ), WC_Autoship_Upsell_Version, true );
 	wp_localize_script( 'wc-autoship-upsell', 'WC_Autoship_Upsell', array(
@@ -75,8 +74,8 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	ob_start();
 		?>
 			<div class="wc-autoship-upsell-container">
-				<a class="wc-autoship-upsell-cart-toggle" data-target="#wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>"><span class="wc-autoship-upsell-icon">&plus;</span><?php echo $upsell_title; ?></a>
-				<div id="wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>" class="wc-autoship-upsell-cart-options" title="<?php echo esc_attr( strip_tags( $upsell_title ) ); ?>">
+				<button type="button" class="wc-autoship-upsell-cart-toggle" data-popup="#wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>"><span class="wc-autoship-upsell-icon">&plus;</span><?php echo $upsell_title; ?></button>
+				<div id="wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>" class="wc-autoship-upsell-cart-options">
 					<input type="hidden" name="wc_autoship_upsell_item_key" value="<?php echo esc_attr( $item_key ); ?>" />
 					<input type="hidden" name="wc_autoship_upsell_remove_from_cart_url" value="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>" />
 					<input type="hidden" name="wc_autoship_upsell_add_to_cart_url" value="<?php echo esc_attr( $product->add_to_cart_url() ) ?>" />
@@ -85,7 +84,9 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 							array( 'id="$1-' . $item_key . '"', 'for="$1-' . $item_key . '"' ),
 							WC_Autoship::render_template( 'product/autoship-options', array( 'product' => $product ) )
 					); ?>
-					<button type="button" class="wc-autoship-upsell-cart-submit button expand"><?php echo __( 'Update', 'wc-autoship-upsell' ); ?></button>
+					<p>
+						<button type="button" class="wc-autoship-upsell-cart-submit"><?php echo __( 'Add Auto-Ship', 'wc-autoship-upsell' ); ?></button>
+					</p>
 				</div>
 			</div>
 		<?php
@@ -93,5 +94,3 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	return $name . $upsell_content;
 }
 add_filter( 'woocommerce_cart_item_name', 'wc_autoship_upsell_cart_item_name', 10, 3 );
-// WooCommerce 2.2
-add_filter( 'woocommerce_in_cart_product_title', 'wc_autoship_upsell_cart_item_name', 10, 3 );
