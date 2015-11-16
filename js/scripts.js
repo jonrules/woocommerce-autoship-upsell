@@ -24,8 +24,14 @@ jQuery(function ($) {
 		var remove_from_cart_url = $form.find('input[name="wc_autoship_upsell_remove_from_cart_url"]').val();
 		var add_to_cart_url = $form.find('input[name="wc_autoship_upsell_add_to_cart_url"]').val();
 		add_to_cart_url += '&quantity=' + encodeURIComponent(quantity) + '&wc_autoship_frequency=' + encodeURIComponent(frequency);
-		$.get(remove_from_cart_url, function (response) {
-			window.location = add_to_cart_url;
+		$.get(remove_from_cart_url, function () {
+			$.get(add_to_cart_url, function () {
+				window.location = WC_Autoship_Upsell.cart_url;
+			}).fail(function () {
+				alert('Error');
+				$submit.removeAttr('disabled');
+				$submit.text(submitText);
+			});
 		}).fail(function () {
 			alert('Error');
 			$submit.removeAttr('disabled');

@@ -65,7 +65,7 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	$upsell_title = '';
 	if ( isset( $item['wc_autoship_frequency'] ) ) {
 		$upsell_title = __( '<span class="wc-autoship-upsell-icon">&#9998;</span> Change Auto-Ship', 'wc-autoship-upsell' );
-	} elseif ( $diff > 0 ) {
+	} elseif ( $autoship_price > 0 && $diff > 0 ) {
 		$upsell_title = __( '<span class="wc-autoship-upsell-icon">&plus;</span>Save ' . wc_price( $diff ) . ' with Auto-Ship', 'wc-autoship-upsell' );
 	} else {
 		$upsell_title = __( '<span class="wc-autoship-upsell-icon">&plus;</span>Add to Auto-Ship', 'wc-autoship-upsell' );
