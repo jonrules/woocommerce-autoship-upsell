@@ -41,7 +41,7 @@ function wc_autoship_upsell_scripts() {
 add_action( 'wp_enqueue_scripts', 'wc_autoship_upsell_scripts' );
 
 function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
-	if ( ! is_cart() || isset( $item['wc_autoship_frequency'] ) ) {
+	if ( ! is_cart() ) {
 		return $name;
 	}
 
@@ -63,18 +63,19 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	);
 	$diff = $product->get_price() - $autoship_price;
 	$upsell_title = '';
-	if ($diff > 0) {
-
-		$upsell_title = __( 'Save ' . wc_price( $diff ) . ' with Auto-Ship', 'wc-autoship-upsell' );
+	if ( isset( $item['wc_autoship_frequency'] ) ) {
+		$upsell_title = __( '<span class="wc-autoship-upsell-icon">&#9998;</span> Change Auto-Ship', 'wc-autoship-upsell' );
+	} elseif ( $diff > 0 ) {
+		$upsell_title = __( '<span class="wc-autoship-upsell-icon">&plus;</span>Save ' . wc_price( $diff ) . ' with Auto-Ship', 'wc-autoship-upsell' );
 	} else {
-		$upsell_title = __( 'Add to Auto-Ship', 'wc-autoship-upsell' );
+		$upsell_title = __( '<span class="wc-autoship-upsell-icon">&plus;</span>Add to Auto-Ship', 'wc-autoship-upsell' );
 	}
 	$upsell_title = apply_filters( 'wc-autoship-upsell-title', $upsell_title, $item, $item_key );
 
 	ob_start();
 		?>
 			<div class="wc-autoship-upsell-container">
-				<button type="button" class="wc-autoship-upsell-cart-toggle" data-popup="#wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>"><span class="wc-autoship-upsell-icon">&plus;</span><?php echo $upsell_title; ?></button>
+				<button type="button" class="wc-autoship-upsell-cart-toggle" data-popup="#wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>"><?php echo $upsell_title; ?></button>
 				<div id="wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>" class="wc-autoship-upsell-cart-options">
 					<input type="hidden" name="wc_autoship_upsell_item_key" value="<?php echo esc_attr( $item_key ); ?>" />
 					<input type="hidden" name="wc_autoship_upsell_remove_from_cart_url" value="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>" />
@@ -85,7 +86,7 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 							WC_Autoship::render_template( 'product/autoship-options', array( 'product' => $product ) )
 					); ?>
 					<p>
-						<button type="button" class="wc-autoship-upsell-cart-submit"><?php echo __( 'Add Auto-Ship', 'wc-autoship-upsell' ); ?></button>
+						<button type="button" class="wc-autoship-upsell-cart-submit" data-loading-text="<?php echo __( 'Please wait...', 'wc-autoship-upsell' ); ?>"><?php echo __( 'Update Auto-Ship', 'wc-autoship-upsell' ); ?></button>
 					</p>
 				</div>
 			</div>

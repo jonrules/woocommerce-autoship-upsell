@@ -14,6 +14,9 @@ jQuery(function ($) {
 	$('.wc-autoship-upsell-cart-submit').click(function () {
 		var $submit = $(this);
 		$submit.attr('disabled', 'disabled');
+		var submitText = $submit.text();
+		var loadingText = $submit.data('loading-text');
+		$submit.text(loadingText);
 		var $form = $submit.parents('.wc-autoship-upsell-cart-options');
 		var itemKey = $form.find('input[name="wc_autoship_upsell_item_key"]').val();
 		var frequency = get_frequency_val($form);
@@ -26,6 +29,8 @@ jQuery(function ($) {
 		}).fail(function () {
 			alert('Error');
 			$submit.removeAttr('disabled');
+			$submit.text(submitText);
 		});
 	});
-})
+
+});
