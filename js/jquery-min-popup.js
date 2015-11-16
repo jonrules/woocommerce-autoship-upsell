@@ -20,8 +20,8 @@
 
 		var windowWidth = $(window).width();
 		var windowHeight = $(window).height();
-		var width = $popup.outerWidth(true); //parseInt(0.7*windowWidth);
-		var height = $popup.outerHeight(true); //parseInt(0.7*windowHeight);
+		var width = Math.max(360, parseInt(0.7*windowWidth));
+		var height = Math.min(windowHeight, $popup.outerHeight(true));
 		var left = parseInt((windowWidth - width)/2);
 		var top = parseInt((windowHeight - height)/2);
 		$popup.css({
