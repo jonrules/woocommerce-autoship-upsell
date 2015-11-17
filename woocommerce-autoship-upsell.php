@@ -80,11 +80,18 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 					<input type="hidden" name="wc_autoship_upsell_item_key" value="<?php echo esc_attr( $item_key ); ?>" />
 					<input type="hidden" name="wc_autoship_upsell_remove_from_cart_url" value="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>" />
 					<input type="hidden" name="wc_autoship_upsell_add_to_cart_url" value="<?php echo esc_attr( $product->add_to_cart_url() ) ?>" />
-					<?php echo preg_replace(
-							array( '/\bid="([^"]+)"/', '/\bfor="([^"]+)"/' ),
-							array( 'id="$1-' . $item_key . '"', 'for="$1-' . $item_key . '"' ),
-							WC_Autoship::render_template( 'product/autoship-options', array( 'product' => $product ) )
-					); ?>
+					<?php
+						$theme_template = get_stylesheet_directory() . '/woocommerce-autoship/templates/upsell/autoship-options.php';
+						if ( file_exists( $theme_template ) ) {
+							include $theme_template;
+						} else {
+							echo preg_replace(
+								array( '/\bid="([^"]+)"/', '/\bfor="([^"]+)"/' ),
+								array( 'id="$1-' . $item_key . '"', 'for="$1-' . $item_key . '"' ),
+								WC_Autoship::render_template( 'product/autoship-options', array( 'product' => $product ) )
+							);
+						}
+					?>
 					<p>
 						<button type="button" class="wc-autoship-upsell-cart-submit" data-loading-text="<?php echo __( 'Please wait...', 'wc-autoship-upsell' ); ?>"><?php echo __( 'Update Auto-Ship', 'wc-autoship-upsell' ); ?></button>
 					</p>
