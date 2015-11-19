@@ -63,18 +63,22 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	);
 	$diff = $product->get_price() - $autoship_price;
 	$upsell_title = '';
+	$upsell_class = '';
 	if ( isset( $item['wc_autoship_frequency'] ) ) {
 		$upsell_title = __( '<span class="wc-autoship-upsell-icon">&#9998;</span> Change Auto-Ship', 'wc-autoship-upsell' );
+		$upsell_class = 'wc-autoship-upsell-change-autoship';
 	} elseif ( $autoship_price > 0 && $diff > 0 ) {
 		$upsell_title = __( '<span class="wc-autoship-upsell-icon">&plus;</span>Save ' . wc_price( $diff ) . ' with Auto-Ship', 'wc-autoship-upsell' );
+		$upsell_class = 'wc-autoship-upsell-add-autoship-savings';
 	} else {
 		$upsell_title = __( '<span class="wc-autoship-upsell-icon">&plus;</span>Add to Auto-Ship', 'wc-autoship-upsell' );
+		$upsell_class = 'wc-autoship-upsell-add-autoship';
 	}
 	$upsell_title = apply_filters( 'wc-autoship-upsell-title', $upsell_title, $item, $item_key );
 
 	ob_start();
 		?>
-			<div class="wc-autoship-upsell-container">
+			<div class="wc-autoship-upsell-container <?php echo $upsell_class; ?>">
 				<button type="button" class="wc-autoship-upsell-cart-toggle" data-popup="#wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>"><?php echo $upsell_title; ?></button>
 				<div id="wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>" class="wc-autoship-upsell-cart-options">
 					<input type="hidden" name="wc_autoship_upsell_item_key" value="<?php echo esc_attr( $item_key ); ?>" />
