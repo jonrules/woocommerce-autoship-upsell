@@ -11,7 +11,6 @@ License: Single-site
 */
 
 define( 'WC_Autoship_Upsell_Version', '0.9.9' );
-define( 'WC_Autoship_Upsell_License_Key', 'free' );
 
 function wc_autoship_upsell_install() {
 
@@ -40,6 +39,41 @@ function wc_autoship_upsell_scripts() {
 	wp_enqueue_script( 'wc-autoship-upsell' );
 }
 add_action( 'wp_enqueue_scripts', 'wc_autoship_upsell_scripts' );
+
+function wc_autoship_upsell_settings( $settings ) {
+	$settings[] = array(
+		'name' => __( 'WC Auto-Ship Upsell Settings', 'wc-autoship-upsell' ),
+		'type' => 'title',
+		'desc' => __( 'Enter settings for WC Auto-Ship Upsell', 'wc-autoship-upsell' ),
+		'id' => 'wc_autoship_upsell_settings'
+	);
+	$settings[] = array(
+		'name' => __( 'License Key', 'wc-autoship-upsell' ),
+		'desc' => __( 'Enter your software license key issued after purchase.', 'wc-autoship-upsell' ),
+		'desc_tip' => true,
+		'type' => 'text',
+		'id' => 'wc_autoship_upsell_license_key'
+	);
+	$settings[] = array(
+		'type' => 'sectionend',
+		'id' => 'wc_autoship_upsell_section_end'
+	);
+	return $settings;
+}
+add_filter( 'wc_autoship_settings_addons', 'wc_autoship_upsell_settings', 10, 1 );
+
+function wc_autoship_upsell_addon_license_keys( $addon_license_keys ) {
+	if ( ! isset( $addon_license_keys['wc_autoship_upsell_license_key'] ) ) {
+		$addon_license_keys['wc_autoship_upsell_license_key'] = array(
+			'item_name' => 'WC Auto-Ship Upsell',
+			'license' => trim( get_option( 'wc_autoship_upsell_license_key' ) ),
+			'version' => WC_Autoship_Upsell_Version,
+			'plugin_file' => __FILE__
+		);
+	}
+	return $addon_license_keys;
+}
+add_filter( 'wc_autoship_addon_license_keys', 'wc_autoship_upsell_addon_license_keys', 10, 1 );
 
 function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	if ( ! is_cart() ) {
@@ -107,15 +141,3 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	return $name . $upsell_content;
 }
 add_filter( 'woocommerce_cart_item_name', 'wc_autoship_upsell_cart_item_name', 10, 3 );
-
-function wc_autoship_upsell_updater() {
-	require_once( 'edd/wc-autoship-upsell-plugin-updater.php' );
-	$edd_updater = new WC_Autoship_Upsell_Plugin_Updater( 'https://wooautoship.com', __FILE__, array(
-		'version' => WC_Autoship_Upsell_Version,
-		'license' => WC_Autoship_Upsell_License_Key,
-		'item_name' => 'WC Auto-Ship Upsell',
-		'author' => 'Patterns In the Cloud'
-	) );
-
-}
-add_action( 'admin_init', 'wc_autoship_upsell_updater', 0 );
