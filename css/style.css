@@ -1,12 +1,10 @@
-.wc-autoship-upsell-container .wc-autoship-upsell-cart-options {
-  display: none;
+.wc-autoship-upsell-cart-toggle {
+	font-size: 80%;
+	font-weight: bold;
+	display: block;
+	cursor: pointer;
 }
-.wc-autoship-upsell-container .wc-autoship-upsell-cart-toggle {
-  font-size: 80%;
-  font-weight: bold;
-  display: block;
-  cursor: pointer;
-}
-.wc-autoship-upsell-container .wc-autoship-upsell-cart-submit {
-  display: block;
+
+#wc-autoship-upsell-cart-popup {
+	display: none;
 }

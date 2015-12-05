@@ -34,7 +34,8 @@ function wc_autoship_upsell_scripts() {
 	wp_register_script( 'wc-autoship-upsell', plugin_dir_url( __FILE__ ) . 'js/scripts.js', array( 'jquery' ), WC_Autoship_Upsell_Version, true );
 	wp_localize_script( 'wc-autoship-upsell', 'WC_Autoship_Upsell', array(
 		'cart_upsell_url' => admin_url( 'admin-ajax.php?action=wc_autoship_upsell_cart' ),
-		'cart_url' => WC()->cart->get_cart_url()
+		'cart_url' => WC()->cart->get_cart_url(),
+		'get_cart_options_url' => admin_url( 'admin-ajax.php?action=get_cart_options' )
 	) );
 	wp_enqueue_script( 'wc-autoship-upsell' );
 }
@@ -114,30 +115,42 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	ob_start();
 		?>
 			<div class="wc-autoship-upsell-container <?php echo $upsell_class; ?>">
-				<button type="button" class="wc-autoship-upsell-cart-toggle" data-popup="#wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>"><?php echo $upsell_title; ?></button>
-				<div id="wc-autoship-upsell-cart-options-<?php echo esc_attr( $item_key ); ?>" class="wc-autoship-upsell-cart-options">
-					<input type="hidden" name="wc_autoship_upsell_item_key" value="<?php echo esc_attr( $item_key ); ?>" />
-					<input type="hidden" name="wc_autoship_upsell_remove_from_cart_url" value="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>" />
-					<input type="hidden" name="wc_autoship_upsell_add_to_cart_url" value="<?php echo esc_attr( $product->add_to_cart_url() ) ?>" />
-					<?php
-						$theme_template = get_stylesheet_directory() . '/woocommerce-autoship/templates/upsell/autoship-options.php';
-						if ( file_exists( $theme_template ) ) {
-							include $theme_template;
-						} else {
-							echo preg_replace(
-								array( '/\bid="([^"]+)"/', '/\bfor="([^"]+)"/' ),
-								array( 'id="$1-' . $item_key . '"', 'for="$1-' . $item_key . '"' ),
-								WC_Autoship::render_template( 'product/autoship-options', array( 'product' => $product ) )
-							);
-						}
-					?>
-					<p>
-						<button type="button" class="wc-autoship-upsell-cart-submit" data-loading-text="<?php echo __( 'Please wait...', 'wc-autoship-upsell' ); ?>"><?php echo __( 'Update Auto-Ship', 'wc-autoship-upsell' ); ?></button>
-					</p>
-				</div>
+				<button type="button" class="wc-autoship-upsell-cart-toggle"
+					data-cart-item-key="<?php echo esc_attr( $item_key ); ?>"
+					data-product-id="<?php echo esc_attr( $product->id ); ?>"
+					data-remove-from-cart-url="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>"
+					data-add-to-cart-url="<?php echo esc_attr( $product->add_to_cart_url() ) ?>"><?php echo $upsell_title; ?></button>
 			</div>
 		<?php
 	$upsell_content = ob_get_clean();
 	return $name . $upsell_content;
 }
 add_filter( 'woocommerce_cart_item_name', 'wc_autoship_upsell_cart_item_name', 10, 3 );
+
+function wc_autoship_upsell_after_cart() {
+	?>
+		<div id="wc-autoship-upsell-cart-popup">
+			<div class="wc-autoship-upsell-cart-popup-loading-status"><?php echo __( 'Please wait...', 'wc-autoship-upsell' ); ?></div>
+			<div class="wc-autoship-upsell-cart-popup-content">
+				<div class="wc-autoship-upsell-cart-options"></div>
+				<p>
+					<button type="button" class="wc-autoship-upsell-cart-submit" data-loading-text="<?php echo __( 'Please wait...', 'wc-autoship-upsell' ); ?>"><?php echo __( 'Update Auto-Ship', 'wc-autoship-upsell' ); ?></button>
+				</p>
+			</div>
+		</div>
+	<?php
+}
+add_action( 'woocommerce_after_cart', 'wc_autoship_upsell_after_cart' );
+
+function wc_autoship_upsell_ajax_get_cart_options() {
+	$product = wc_get_product( $_REQUEST['product_id'] );
+	$theme_template = get_stylesheet_directory() . '/woocommerce-autoship/templates/upsell/autoship-options.php';
+	if ( file_exists( $theme_template ) ) {
+		include $theme_template;
+	} else {
+		WC_Autoship::include_template( 'product/autoship-options', array( 'product' => $product ) );
+	}
+	die();
+}
+add_action( 'wp_ajax_get_cart_options', 'wc_autoship_upsell_ajax_get_cart_options' );
+add_action( 'wp_ajax_nopriv_get_cart_options', 'wc_autoship_upsell_ajax_get_cart_options' );
