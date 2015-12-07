@@ -4,13 +4,13 @@
 Plugin Name: WC Autoship Upsell
 Plugin URI: https://wooautoship.com
 Description: Add autoship upsell options to the cart
-Version: 1.0.0
+Version: 1.1.0
 Author: Patterns In the Cloud
 Author URI: http://patternsinthecloud.com
 License: Single-site
 */
 
-define( 'WC_Autoship_Upsell_Version', '1.0.0' );
+define( 'WC_Autoship_Upsell_Version', '1.1.0' );
 
 function wc_autoship_upsell_install() {
 
@@ -33,9 +33,9 @@ function wc_autoship_upsell_scripts() {
 	wp_enqueue_style( 'wc-autoship-upsell', plugin_dir_url( __FILE__ ) . 'css/style.css', array(), WC_Autoship_Upsell_Version );
 	wp_register_script( 'wc-autoship-upsell', plugin_dir_url( __FILE__ ) . 'js/scripts.js', array( 'jquery' ), WC_Autoship_Upsell_Version, true );
 	wp_localize_script( 'wc-autoship-upsell', 'WC_Autoship_Upsell', array(
-		'cart_upsell_url' => admin_url( 'admin-ajax.php?action=wc_autoship_upsell_cart' ),
+		'cart_upsell_url' => admin_url( '/admin-ajax.php?action=wc_autoship_upsell_cart' ),
 		'cart_url' => WC()->cart->get_cart_url(),
-		'get_cart_options_url' => admin_url( 'admin-ajax.php?action=get_cart_options' )
+		'get_cart_options_url' => admin_url( '/admin-ajax.php?action=get_cart_options' )
 	) );
 	wp_enqueue_script( 'wc-autoship-upsell' );
 }
