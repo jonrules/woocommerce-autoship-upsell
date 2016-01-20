@@ -90,7 +90,7 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	$var_product_id = ( ! empty( $item['variation_id'] ) ) ? $item['variation_id'] : $item['product_id'];
 	$product = wc_get_product( $var_product_id );
 	$price = $product->get_price();
-	$autoship_price = (int) apply_filters( 'wc_autoship_price',
+	$autoship_price = (float) apply_filters( 'wc_autoship_price',
 			get_post_meta( $var_product_id, '_wc_autoship_price', true ),
 			$var_product_id,
 			0,
