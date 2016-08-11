@@ -66,7 +66,7 @@ add_filter( 'wc_autoship_addons_settings', 'wc_autoship_upsell_settings', 10, 1 
 function wc_autoship_upsell_addon_license_keys( $addon_license_keys ) {
 	if ( ! isset( $addon_license_keys['wc_autoship_upsell_license_key'] ) ) {
 		$addon_license_keys['wc_autoship_upsell_license_key'] = array(
-			'item_name' => 'WC Auto-Ship Upsell',
+			'item_name' => 'WC Autoship Upsell',
 			'license' => trim( get_option( 'wc_autoship_upsell_license_key' ) ),
 			'version' => WC_Autoship_Upsell_Version,
 			'plugin_file' => __FILE__
