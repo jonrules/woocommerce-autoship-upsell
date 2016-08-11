@@ -118,6 +118,7 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 				<button type="button" class="wc-autoship-upsell-cart-toggle"
 					data-cart-item-key="<?php echo esc_attr( $item_key ); ?>"
 					data-product-id="<?php echo esc_attr( $product->id ); ?>"
+					data-variation-id="<?php echo ( ! empty( $product->variation_id ) ? esc_attr( $product->variation_id ) : '' ); ?>"
 					data-remove-from-cart-url="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>"
 					data-add-to-cart-url="<?php echo esc_attr( $product->add_to_cart_url() ) ?>"><?php echo $upsell_title; ?></button>
 			</div>
@@ -143,13 +144,9 @@ function wc_autoship_upsell_after_cart() {
 add_action( 'woocommerce_after_cart', 'wc_autoship_upsell_after_cart' );
 
 function wc_autoship_upsell_ajax_get_cart_options() {
-	$product = wc_get_product( $_REQUEST['product_id'] );
-	$theme_template = get_stylesheet_directory() . '/woocommerce-autoship/templates/upsell/autoship-options.php';
-	if ( file_exists( $theme_template ) ) {
-		include $theme_template;
-	} else {
-		WC_Autoship::include_template( 'product/autoship-options', array( 'product' => $product ) );
-	}
+	$template_product_id = ! empty( $_REQUEST['variation_id'] ) ? $_REQUEST['variation_id'] : $_REQUEST['product_id'];
+	$product = wc_get_product( $template_product_id );
+	wc_autoship_print_cart_autoship_options( $product );
 	die();
 }
 add_action( 'wp_ajax_get_cart_options', 'wc_autoship_upsell_ajax_get_cart_options' );

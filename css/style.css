@@ -8,3 +8,7 @@
 #wc-autoship-upsell-cart-popup {
 	display: none;
 }
+
+#mini-cart-content .wc-autoship-upsell-container {
+	display: none;
+}

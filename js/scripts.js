@@ -17,7 +17,9 @@ jQuery(function ($) {
 		$loadingStatus.show();
 		$content.hide();
 		$popup.minPopup();
-		var get_cart_options_url = WC_Autoship_Upsell.get_cart_options_url + '&product_id=' + encodeURIComponent($toggle.data('product-id'));
+		var get_cart_options_url = WC_Autoship_Upsell.get_cart_options_url
+			+ '&product_id=' + encodeURIComponent($toggle.data('product-id'))
+			+ '&variation_id=' + encodeURIComponent($toggle.data('variation-id'));
 		$.get( get_cart_options_url, function (response) {
 			$options.html(response);
 			$loadingStatus.hide();
