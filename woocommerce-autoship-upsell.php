@@ -112,12 +112,15 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	}
 	$upsell_title = apply_filters( 'wc-autoship-upsell-title', $upsell_title, $item, $item_key );
 
+	// Check for WC Version
+	$product_id = method_exists( $product, 'get_id' ) ? $product->get_id() : $product->id;
+
 	ob_start();
 		?>
 			<div class="wc-autoship-upsell-container <?php echo $upsell_class; ?>">
 				<button type="button" class="wc-autoship-upsell-cart-toggle"
 					data-cart-item-key="<?php echo esc_attr( $item_key ); ?>"
-					data-product-id="<?php echo esc_attr( $product->id ); ?>"
+					data-product-id="<?php echo esc_attr( $product_id ); ?>"
 					data-remove-from-cart-url="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>"
 					data-add-to-cart-url="<?php echo esc_attr( $product->add_to_cart_url() ) ?>"><?php echo $upsell_title; ?></button>
 			</div>
