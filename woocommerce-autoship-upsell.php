@@ -4,13 +4,13 @@
 Plugin Name: WC Autoship Upsell
 Plugin URI: https://wooautoship.com
 Description: Add autoship upsell options to the cart
-Version: 1.1.1
+Version: 2.0.0
 Author: Patterns In the Cloud
 Author URI: http://patternsinthecloud.com
 License: Single-site
 */
 
-define( 'WC_Autoship_Upsell_Version', '1.1.1' );
+define( 'WC_Autoship_Upsell_Version', '2.0.0' );
 
 function wc_autoship_upsell_install() {
 
@@ -66,7 +66,7 @@ add_filter( 'wc_autoship_addons_settings', 'wc_autoship_upsell_settings', 10, 1 
 function wc_autoship_upsell_addon_license_keys( $addon_license_keys ) {
 	if ( ! isset( $addon_license_keys['wc_autoship_upsell_license_key'] ) ) {
 		$addon_license_keys['wc_autoship_upsell_license_key'] = array(
-			'item_name' => 'WC Auto-Ship Upsell',
+			'item_name' => 'WC Autoship Upsell',
 			'license' => trim( get_option( 'wc_autoship_upsell_license_key' ) ),
 			'version' => WC_Autoship_Upsell_Version,
 			'plugin_file' => __FILE__
@@ -118,6 +118,7 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 				<button type="button" class="wc-autoship-upsell-cart-toggle"
 					data-cart-item-key="<?php echo esc_attr( $item_key ); ?>"
 					data-product-id="<?php echo esc_attr( $product->id ); ?>"
+					data-variation-id="<?php echo ( ! empty( $product->variation_id ) ? esc_attr( $product->variation_id ) : '' ); ?>"
 					data-remove-from-cart-url="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>"
 					data-add-to-cart-url="<?php echo esc_attr( $product->add_to_cart_url() ) ?>"><?php echo $upsell_title; ?></button>
 			</div>
@@ -143,13 +144,9 @@ function wc_autoship_upsell_after_cart() {
 add_action( 'woocommerce_after_cart', 'wc_autoship_upsell_after_cart' );
 
 function wc_autoship_upsell_ajax_get_cart_options() {
-	$product = wc_get_product( $_REQUEST['product_id'] );
-	$theme_template = get_stylesheet_directory() . '/woocommerce-autoship/templates/upsell/autoship-options.php';
-	if ( file_exists( $theme_template ) ) {
-		include $theme_template;
-	} else {
-		WC_Autoship::include_template( 'product/autoship-options', array( 'product' => $product ) );
-	}
+	$template_product_id = ! empty( $_REQUEST['variation_id'] ) ? $_REQUEST['variation_id'] : $_REQUEST['product_id'];
+	$product = wc_get_product( $template_product_id );
+	wc_autoship_print_cart_autoship_options( $product );
 	die();
 }
 add_action( 'wp_ajax_get_cart_options', 'wc_autoship_upsell_ajax_get_cart_options' );
