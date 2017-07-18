@@ -89,6 +89,21 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	}
 	$var_product_id = ( ! empty( $item['variation_id'] ) ) ? $item['variation_id'] : $item['product_id'];
 	$product = wc_get_product( $var_product_id );
+
+	$product_id = 0;
+	$variation_id = 0;
+	if ( $product->get_type() == 'variation' ) {
+		// Check deprecated property
+		$product_id = method_exists( $product, 'get_parent_id' ) ? $product->get_parent_id() : $product->id;
+		// Check deprecated property
+		$variation_id = property_exists( $product, 'variation_id' ) ? $product->variation_id : $product->get_id();
+	} else {
+		// Check deprecated property
+		$product_id = method_exists( $product, 'get_id' ) ? $product->get_id() : $product->id;
+		// Check deprecated property
+		$variation_id = 0;
+	}
+
 	$price = $product->get_price();
 	$autoship_price = (float) apply_filters( 'wc_autoship_price',
 			get_post_meta( $var_product_id, '_wc_autoship_price', true ),
@@ -112,16 +127,13 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	}
 	$upsell_title = apply_filters( 'wc-autoship-upsell-title', $upsell_title, $item, $item_key );
 
-	// Check for WC Version
-	$product_id = method_exists( $product, 'get_id' ) ? $product->get_id() : $product->id;
-
 	ob_start();
 		?>
 			<div class="wc-autoship-upsell-container <?php echo $upsell_class; ?>">
 				<button type="button" class="wc-autoship-upsell-cart-toggle"
 					data-cart-item-key="<?php echo esc_attr( $item_key ); ?>"
 					data-product-id="<?php echo esc_attr( $product_id ); ?>"
-					data-variation-id="<?php echo ( ! empty( $product->variation_id ) ? esc_attr( $product->variation_id ) : '' ); ?>"
+					data-variation-id="<?php echo esc_attr( $variation_id ); ?>"
 					data-remove-from-cart-url="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>"
 					data-add-to-cart-url="<?php echo esc_attr( $product->add_to_cart_url() ) ?>"><?php echo $upsell_title; ?></button>
 			</div>
