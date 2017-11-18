@@ -34,7 +34,7 @@ function wc_autoship_upsell_scripts() {
 	wp_register_script( 'wc-autoship-upsell', plugin_dir_url( __FILE__ ) . 'js/scripts.js', array( 'jquery' ), WC_Autoship_Upsell_Version, true );
 	wp_localize_script( 'wc-autoship-upsell', 'WC_Autoship_Upsell', array(
 		'cart_upsell_url' => admin_url( '/admin-ajax.php?action=wc_autoship_upsell_cart' ),
-		'cart_url' => WC()->cart->get_cart_url(),
+		'cart_url' => wc_get_cart_url(),
 		'get_cart_options_url' => admin_url( '/admin-ajax.php?action=get_cart_options' )
 	) );
 	wp_enqueue_script( 'wc-autoship-upsell' );
