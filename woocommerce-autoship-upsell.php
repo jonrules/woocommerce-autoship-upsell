@@ -127,7 +127,6 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 	}
 	$upsell_title = apply_filters( 'wc-autoship-upsell-title', $upsell_title, $item, $item_key );
 
-	ob_start();
 		?>
 			<div class="wc-autoship-upsell-container <?php echo $upsell_class; ?>">
 				<button type="button" class="wc-autoship-upsell-cart-toggle"
@@ -138,8 +137,7 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
 					data-add-to-cart-url="<?php echo esc_attr( $product->add_to_cart_url() ) ?>"><?php echo $upsell_title; ?></button>
 			</div>
 		<?php
-	$upsell_content = ob_get_clean();
-	return $name . $upsell_content;
+	return $name;
 }
 add_filter( 'woocommerce_cart_item_name', 'wc_autoship_upsell_cart_item_name', 10, 3 );
 
