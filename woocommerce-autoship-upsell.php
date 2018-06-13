@@ -178,6 +178,7 @@ add_action( 'wp_ajax_nopriv_get_cart_options', 'wc_autoship_upsell_ajax_get_cart
 
 function wc_as_upsell_updater() {
 	$addon_license_keys = apply_filters( 'wc_autoship_addon_license_keys', array() );
+	$item_name = "WC Autoship Upsell";
 
 	if ( ! isset( $addon_license_keys[ 'wc_autoship_upsell_license_key' ] ) ) {
 		# we do not have license show some message
@@ -188,7 +189,8 @@ function wc_as_upsell_updater() {
 		   return;
        }else{
 	       $license_key = $addon_license_keys[ 'wc_autoship_upsell_license_key' ]['license'];
-	       $item_name = $addon_license_keys[ 'wc_autoship_upsell_license_key' ]['item_name'];
+	       # TODO to be remove in the future
+//	       $item_name = $addon_license_keys[ 'wc_autoship_upsell_license_key' ]['item_name'];
        }
     }
 
