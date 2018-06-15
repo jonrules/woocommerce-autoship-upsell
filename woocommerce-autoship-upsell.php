@@ -12,10 +12,6 @@ License: Single-site
 
 define( 'WC_Autoship_Upsell_Version', '2.0.4' );
 
-function wc_autoship_upsell_install() {
-
-}
-
 register_activation_hook( __FILE__, 'wc_autoship_upsell_install' );
 
 function wc_autoship_upsell_deactivate() {
@@ -29,6 +25,21 @@ function wc_autoship_upsell_uninstall() {
 }
 
 register_uninstall_hook( __FILE__, 'wc_autoship_upsell_uninstall' );
+
+require_once( 'src/dependency.php' );
+// Include source files
+// check is wc running
+if ( wc_as_check_is_wc_running() == false ) {
+	return;
+}
+
+if ( wc_as_running() == false ) {
+	return;
+}
+
+function wc_autoship_upsell_install() {
+
+}
 
 function wc_autoship_upsell_scripts() {
 	wp_enqueue_style( 'jquery-min-popup', plugin_dir_url( __FILE__ ) . 'css/jquery-min-popup.css', array(), WC_Autoship_Upsell_Version );
@@ -140,7 +151,19 @@ function wc_autoship_upsell_cart_item_name( $name, $item, $item_key ) {
                 data-cart-item-key="<?php echo esc_attr( $item_key ); ?>"
                 data-product-id="<?php echo esc_attr( $product_id ); ?>"
                 data-variation-id="<?php echo esc_attr( $variation_id ); ?>"
+
+			<?php
+			if ( woocommerce_version_check("3.3.0") ) {
+				?>
+                data-remove-from-cart-url="<?php echo esc_attr( wc_get_cart_remove_url( $item_key ) ) ?>"
+				<?php
+			} else {
+				?>
                 data-remove-from-cart-url="<?php echo esc_attr( WC()->cart->get_remove_url( $item_key ) ) ?>"
+				<?php
+			}
+			?>
+
                 data-add-to-cart-url="<?php echo esc_attr( $product->add_to_cart_url() ) ?>"><?php echo $upsell_title; ?></button>
     </div>
 	<?php
@@ -175,26 +198,25 @@ function wc_autoship_upsell_ajax_get_cart_options() {
 add_action( 'wp_ajax_get_cart_options', 'wc_autoship_upsell_ajax_get_cart_options' );
 add_action( 'wp_ajax_nopriv_get_cart_options', 'wc_autoship_upsell_ajax_get_cart_options' );
 
-
 function wc_as_upsell_updater() {
 	$addon_license_keys = apply_filters( 'wc_autoship_addon_license_keys', array() );
-	$item_name = "WC Autoship Upsell";
+	$item_name          = "WC Autoship Upsell";
 
-	if ( ! isset( $addon_license_keys[ 'wc_autoship_upsell_license_key' ] ) ) {
+	if ( ! isset( $addon_license_keys['wc_autoship_upsell_license_key'] ) ) {
 		# we do not have license show some message
 		return;
-	}else{
-	   if(!isset($addon_license_keys[ 'wc_autoship_upsell_license_key' ]['license'])){
-		   # we do not have license show some message
-		   return;
-       }else{
-	       $license_key = $addon_license_keys[ 'wc_autoship_upsell_license_key' ]['license'];
-	       # TODO to be remove in the future
+	} else {
+		if ( ! isset( $addon_license_keys['wc_autoship_upsell_license_key']['license'] ) ) {
+			# we do not have license show some message
+			return;
+		} else {
+			$license_key = $addon_license_keys['wc_autoship_upsell_license_key']['license'];
+			# TODO to be remove in the future
 //	       $item_name = $addon_license_keys[ 'wc_autoship_upsell_license_key' ]['item_name'];
-       }
-    }
+		}
+	}
 
-	if ( empty( $license_key ) || empty($item_name) ) {
+	if ( empty( $license_key ) || empty( $item_name ) ) {
 		# license field is empty, show some message
 		return;
 	}
